@@ -1,0 +1,31 @@
+﻿services:
+  piazza.api:
+    image: piazza.api
+    build:
+      context: .
+      dockerfile: Piazza.API/Dockerfile
+    restart: always
+    ports:
+      - "8000:80"
+    depends_on:
+      - db
+      - ngrok
+  db:
+    image: postgres:14-alpine
+    ports:
+      - 5432:5432
+    volumes:
+      - ./db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=AVNS_E658Tq5Lf7nrtugjacs
+      - POSTGRES_USER=piazza
+      - POSTGRES_DB=piazza
+  ngrok:
+    image: ngrok/ngrok:alpine
+    environment:
+      NGROK_AUTHTOKEN: ''
+    command: 'http --url=content-jackal-fun.ngrok-free.app piazza.api:80'
+    ports:
+      - '4040:4040'
+    expose:
+      - '4040'
